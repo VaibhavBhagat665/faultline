@@ -1,0 +1,56 @@
+name: ci
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      soak:
+        description: "Run the 100k-seed clean soak (slow)"
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  fast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: go.mod }
+      - run: go vet ./...
+      - run: go test -short -race -shuffle=on -count=1 -timeout 20m ./...
+  full:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: go.mod }
+      - name: all tests except the 100k soak, with race
+        shell: bash
+        run: go test -race -count=1 -skip 'TestSoakClean' -timeout 100m -v ./... 2>&1 | tee full.log
+      - name: skips and failures
+        shell: bash
+        run: grep -E -- '--- (SKIP|FAIL)' full.log || true
+      - name: coverage across packages
+        shell: bash
+        run: |
+          go test -short -count=1 -coverpkg=./... -coverprofile=cover.out ./...
+          go tool cover -func=cover.out | tee cover.txt
+      - name: determinism greps
+        shell: bash
+        run: |
+          grep -rnE 'for .* range' --include=*.go . | grep -v _test.go || true
+          grep -rn '"math/rand"' --include=*.go . | grep -v _test.go || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: test-results, path: "full.log\ncover.txt" }
+  soak:
+    if: github.event.inputs.soak == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: go.mod }
+      - run: go test -count=1 -run TestSoakClean -timeout 340m ./internal/integration/

@@ -1,0 +1,79 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.txt
+coverage.html
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment files
+.env
+.env.local
+
+# Build artifacts
+/bin/
+/dist/
+/build/
+
+# Profiling files
+*.prof
+*.pprof
+cpu.prof
+mem.prof
+
+# Trace files
+*.trace
+
+# Log files
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+Thumbs.db
+desktop.ini
+
+# Test artifacts
+tmp/
+*.golden
+
+# Documentation build artifacts
+/docs/_build/
+/docs/.doctrees/
+
+# Generated files
+*.pb.go
+*_generated.go
+
+# Personal notes and development artifacts
+*RESUME*
+*REVIEW*
+*TRUTH*
+*INTERVIEW*
+notes.md
+TODO.md
+NOTES.txt

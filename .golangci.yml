@@ -1,0 +1,62 @@
+# Copyright 2026 Vaibhav Bhagat
+# SPDX-License-Identifier: Apache-2.0
+
+run:
+  timeout: 5m
+  tests: true
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - errcheck       # Check for unchecked errors
+    - govet          # Reports suspicious constructs
+    - staticcheck    # Go static analysis
+    - revive         # Fast, configurable, extensible linter
+    - gosec          # Inspects source code for security problems
+    - ineffassign    # Detects ineffectual assignments
+    - unused         # Checks for unused constants, variables, functions and types
+    - gofmt          # Checks whether code was gofmt-ed
+    - goimports      # Checks import ordering
+    - misspell       # Finds commonly misspelled English words
+    - unconvert      # Unnecessary type conversions
+    - unparam        # Reports unused function parameters
+    - gocritic       # Provides diagnostics that check for bugs, performance and style issues
+    - bodyclose      # Checks whether HTTP response body is closed
+    - noctx          # Finds sending http request without context.Context
+    - goprintffuncname # Checks that printf-like functions are named with f at the end
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+  
+  govet:
+    enable-all: true
+    disable:
+      - shadow  # Too noisy for this project
+  
+  revive:
+    rules:
+      - name: exported
+        arguments:
+          - "checkPrivateReceivers"
+          - "sayRepetitiveInsteadOfStutters"
+  
+  staticcheck:
+    checks: ["all"]
+  
+  gosec:
+    excludes:
+      - G404  # Use of weak random number generator - we use crypto/rand where needed
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  
+  exclude-rules:
+    # Exclude some linters from running on tests files
+    - path: _test\.go
+      linters:
+        - gosec
+        - unparam
