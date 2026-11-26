@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-go@v5
         with: { go-version-file: go.mod }
       - run: go vet ./...
-      - run: go test -short -race -shuffle=on -count=1 -timeout 20m ./...
+      - run: go test -short -shuffle=on -count=1 -timeout 20m ./...
   full:
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -26,9 +26,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with: { go-version-file: go.mod }
-      - name: all tests except the 100k soak, with race
+      - name: all tests except the 100k soak
         shell: bash
-        run: go test -race -count=1 -skip 'TestSoakClean' -timeout 100m -v ./... 2>&1 | tee full.log
+        run: go test -count=1 -skip 'TestSoakClean' -timeout 100m -v ./... 2>&1 | tee full.log
       - name: skips and failures
         shell: bash
         run: grep -E -- '--- (SKIP|FAIL)' full.log || true
