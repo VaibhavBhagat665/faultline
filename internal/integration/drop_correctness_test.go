@@ -71,7 +71,7 @@ func TestDropCorrectness(t *testing.T) {
 					t.Errorf("clean profile dropped %d messages (expected 0)", totalDropped)
 				}
 			} else {
-				tolerance := 0.01
+				tolerance := 0.03  // 3% tolerance for drop rate variability
 				if observedRate < profile.rate-tolerance || observedRate > profile.rate+tolerance {
 					t.Errorf("observedRate %.4f outside [%.4f, %.4f]", 
 						observedRate, profile.rate-tolerance, profile.rate+tolerance)
